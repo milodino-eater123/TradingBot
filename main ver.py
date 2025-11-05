@@ -3,10 +3,10 @@ import re
 import pandas as pd
 from datetime import date, datetime, timedelta
 import time
-from functions import exclude, get_data, is_date_in_range, SimpleRateLimiter, today_date, last_trading_day
+from functions import exclude, get_data, is_date_in_range, SimpleRateLimiter, now, last_trading_day
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-
+    
 def get_filings_from_page(start_index=0):
     """Get filings from a specific page starting at the given index"""
     base_url = "https://www.sec.gov/cgi-bin/browse-edgar"
@@ -39,10 +39,9 @@ def get_filings_from_page(start_index=0):
     page_filings = []
     accession_numbers = set()
     for i, (text_link, accepted_date, accepted_time, filing_date) in enumerate(filing_data):
-      filing_date_obj = date.fromisoformat(filing_date)
       accepted_datetime = datetime.fromisoformat(f"{accepted_date}T{accepted_time}")
       
-      if not is_date_in_range(filing_date_obj, filing_date1, filing_date2):
+      if not is_date_in_range(accepted_datetime, last_trading_day, now):
         continue 
       accession_match = re.search(r'/(\d+-\d+-\d+)\.txt', text_link)
       if accession_match:
@@ -74,7 +73,7 @@ filing_date2 = date(2025, 11, 25)
 # Collect filings from all pages
 all_filings = []
 start_index = 100
-max_pages = 1 # Set a limit to avoid infinite loops
+max_pages = 100 # Set a limit to avoid infinite loops
 
 print("Scraping SEC filings...")
 

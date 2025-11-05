@@ -144,6 +144,5 @@ df = pd.DataFrame(all_trades)
 csv_filename = "insider_trades.csv"
 df.to_csv(r"C:\Users\samue\Downloads\insider_trades.csv", index=False)
 print(f"Saved {len(df)} trades to {csv_filename}")
-
+valid_stocks = ["RVP","RVP"]
 print(valid_stocks)
-print(len(valid_stocks))

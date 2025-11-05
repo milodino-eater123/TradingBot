@@ -9,13 +9,14 @@ import pandas as pd
 from ordercounter import num_orders
 import ibsync
 import importlib
+from ibsync import cash_balance
 
 LOG_FILE = "logged_stocks.xlsx"
 
 cash_left = ibsync.cash_balance
 orders_left = 5 - num_orders
 allocation_per_stock = cash_left / orders_left
-symbols = ["AAPL"]
+symbols = valid_stocks
 sell_orders = []
 go_ahead = False
 
@@ -66,7 +67,6 @@ class TestApp(EClient, EWrapper):
           for trade in trades_to_sell:
             contract = Contract()
             contract.symbol = trade['symbol']
-            contract.symbol = 'PED'
             contract.secType = "STK"
             contract.exchange = "SMART"
             contract.currency = "USD"
@@ -77,7 +77,6 @@ class TestApp(EClient, EWrapper):
             sell_order.action = "SELL"
             sell_order.orderType = "MKT"
             sell_order.totalQuantity = trade['shares']
-            sell_order.totalQuantity = 500
             sell_order.tif = "DAY"
 
             self.placeOrder(sell_order.orderId, contract, sell_order)
@@ -122,6 +121,7 @@ class TestApp(EClient, EWrapper):
                     self.reqContractDetails(self.next_order_id, contract)
 
 
+
     def contractDetails(self, reqId: int, contractDetails: ContractDetails):
         last_price = get_current_price(contractDetails.contract.symbol)
         shares_to_buy = int(allocation_per_stock / last_price)
@@ -141,8 +141,10 @@ class TestApp(EClient, EWrapper):
               if self.pending_sells_count == 0:
                 globals()['go_ahead'] = True
             elif execution.side == "BOT":
-               log_execution(contract, int(execution.shares))
-               print(f"Logged: {contract.symbol}, {execution.shares} shares")
+              log_execution(contract, int(execution.cumQty))
+              print(f"Logged: {contract.symbol}, {execution.shares} shares")
+
+
 
 # Run the app
 app = TestApp()

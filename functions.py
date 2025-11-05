@@ -36,6 +36,20 @@ elif trading_day_checker(yesterday4_date) == True:
 else:
     print("error wtf")
 
+def is_date_in_range(check_date, start_date, end_date):
+
+    import pytz
+    ET = pytz.timezone('US/Eastern')
+    
+    if check_date.tzinfo is None:
+        check_date = ET.localize(check_date)
+    if start_date.tzinfo is None:
+        start_date = ET.localize(start_date)
+    if end_date.tzinfo is None:
+        end_date = ET.localize(end_date)
+    
+    return start_date <= check_date <= end_date
+
 print(now)
 print(last_trading_day)
 
@@ -85,7 +99,7 @@ def get_data(txt_content):
     pattern = r'<transactionShares>\s*<value>(\d+)</value>\s*</transactionShares>.*?<transactionPricePerShare>\s*<value>([\d.]+)</value>'
     matches = re.findall(pattern, txt_content, re.DOTALL)
     total_investment = 0
-   
+    end_price = 0
     
     for quantity_str, price_str in matches:
         quantity = int(quantity_str)
@@ -97,8 +111,7 @@ def get_data(txt_content):
     return [str(ticker_matches[0]), owner_type, total_investment, is_sale, end_price
     ]
 
-def is_date_in_range(check_date, start_date, end_date):
-    return start_date <= check_date <= end_date
+
 
 def exclude(xml_content):
     return not any([

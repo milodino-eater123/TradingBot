@@ -2,7 +2,9 @@ import datetime
 import pandas as pd
 from pathlib import Path
 import sys 
-new_trades = 1
+from tradingbot import valid_stocks
+
+new_trades = len(valid_stocks)
 
 LOG_FILE = "logged_stocks.xlsx"
 columns = ['date', 'symbol', 'shares']
