@@ -1,6 +1,6 @@
 from ibapi.client import *
 from ibapi.wrapper import *
-from tradingbot import valid_stocks
+from main_ver import valid_stocks
 import yfinance as yf
 from alpaca import get_current_price
 from datetime import datetime
@@ -9,7 +9,7 @@ import pandas as pd
 from ordercounter import num_orders
 import ibsync
 import importlib
-from ibsync import cash_balance
+
 
 LOG_FILE = "logged_stocks.xlsx"
 
